@@ -13,40 +13,40 @@ class _MakloonPageState extends State<MakloonPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Kelola Data Makloon")),
+      appBar: AppBar(title: Text("Kelola Makloon")),
       body: SafeArea(
         child: Padding(
           padding: .all(15),
-          child: ListView.builder(
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: dummyMakloons.length,
+            separatorBuilder: (context, index) => SizedBox(height: 10),
+            padding: .symmetric(horizontal: 5),
             itemBuilder: (context, index) {
               final item = dummyMakloons[index];
-              return Card(
-                margin: .only(bottom: 10),
-                child: ListTile(
-                  leading: CircleAvatar(child: Text(item.nama[0])),
-                  title: Text(
-                    item.nama,
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    item.alamatMakloon,
-                    softWrap: true,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _confirmDelete(item.id),
-                  ),
+
+              return ListTile(
+                tileColor: Colors.white,
+                leading: CircleAvatar(child: Text(item.nama[0])),
+                title: Text(dummyMakloons[index].nama),
+                subtitle: Text(
+                  dummyMakloons[index].alamatMakloon,
+                  maxLines: 2,
+                  softWrap: true,
                 ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _confirmDelete,
+                ),
+                // onTap: () => editDialog,
               );
             },
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
         onPressed: () => _showAddDialog(context),
       ),
     );
@@ -56,23 +56,40 @@ class _MakloonPageState extends State<MakloonPage> {
   void _showAddDialog(BuildContext context) {
     Get.defaultDialog(
       title: "Tambah Makloon",
-      content: Column(
-        children: [
-          TextField(
-            controller: TextEditingController(),
-            decoration: const InputDecoration(labelText: "Nama Makloon/PT"),
-          ),
-          TextField(
-            controller: TextEditingController(),
-            decoration: const InputDecoration(
-              labelText: "Kode Divisi (Opsional)",
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          children: [
+            TextField(
+              controller: TextEditingController(),
+              decoration: InputDecoration(
+                labelText: "Nama Makloon",
+                border: OutlineInputBorder(),
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 10),
+            TextField(
+              controller: TextEditingController(),
+              decoration: InputDecoration(
+                labelText: "Alamat Makloon",
+                floatingLabelStyle: TextStyle(),
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
       ),
-      textConfirm: "Simpan",
-      textCancel: "Batal",
-      // onConfirm: () => controller.addMakloon(namaC.text, kodeC.text),
+      cancel: TextButton(
+        onPressed: () => Get.back(),
+        child: Text("Batal", style: TextStyle(color: Colors.red)),
+      ),
+      confirm: FilledButton(
+        onPressed: () {
+          // controller.addMakloon(namaC.text, alamat.text),
+        },
+        child: Text("Simpan"),
+      ),
     );
   }
 
@@ -86,7 +103,7 @@ class _MakloonPageState extends State<MakloonPage> {
       confirmTextColor: Colors.white,
       onConfirm: () {
         // controller.deleteMakloon(id);
-        Get.back(); // Tutup dialog
+        Get.back();
       },
     );
   }

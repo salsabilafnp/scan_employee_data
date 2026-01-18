@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.pages,
     );
   }

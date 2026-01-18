@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scan_employee_data/app/data/models/dummy_employee.dart';
+import 'package:scan_employee_data/app/data/models/dummy_makloon.dart';
 import 'package:scan_employee_data/app/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +18,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Beranda"),
         actions: [
-          IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Get.toNamed(AppRoutes.setting),
+          ),
         ],
       ),
       body: SafeArea(
@@ -51,84 +55,23 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           mainAxisAlignment: .spaceAround,
                           children: [
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.people),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "20",
-                                      style: TextStyle(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Total Data",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ],
+                            _buildSummaryItem(
+                              "20",
+                              "Total Data",
+                              Icons.people,
+                              Colors.black,
                             ),
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.sync, color: Colors.green),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "10",
-                                      style: TextStyle(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Sync Data",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
+                            _buildSummaryItem(
+                              "10",
+                              "Synced Data",
+                              Icons.sync,
+                              Colors.green,
                             ),
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.sync_disabled,
-                                      color: Colors.orange,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      "10",
-                                      style: TextStyle(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  "Unsync Data",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ],
+                            _buildSummaryItem(
+                              "10",
+                              "Unsync Data",
+                              Icons.sync_disabled,
+                              Colors.orange,
                             ),
                           ],
                         ),
@@ -150,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.place),
+                        Icon(Icons.location_pin, color: Colors.red),
                         SizedBox(width: 5),
                         Column(
                           crossAxisAlignment: .start,
@@ -168,11 +111,9 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     FilledButton.icon(
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.makloonData);
-                      },
+                      onPressed: () => Get.toNamed(AppRoutes.makloonData),
                       label: Text("Kelola Makloon"),
-                      icon: Icon(Icons.home_work),
+                      icon: Icon(Icons.factory),
                     ),
                   ],
                 ),
@@ -189,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () => Get.toNamed(AppRoutes.employeeData),
                       label: Text("Lihat Semua"),
                       icon: Icon(Icons.arrow_forward),
                       iconAlignment: .end,
@@ -207,6 +148,7 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final item = dummyEmployees[index];
                     final isSyncedData = item.isSynced;
+
                     return Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -229,42 +171,28 @@ class _HomePageState extends State<HomePage> {
                       ),
                       // employee info
                       child: ListTile(
-                        contentPadding: .symmetric(horizontal: 10, vertical: 2),
+                        tileColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         title: Text(
                           item.nama,
-                          style: TextStyle(fontWeight: .w600),
-                          maxLines: 1,
-                          overflow: .ellipsis,
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Row(
-                          children: [
-                            Text(item.makloon, style: TextStyle(fontSize: 12)),
-                            SizedBox(width: 8),
-                            Text(
-                              item.createdAt,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
+                        subtitle: Text(
+                          "${item.makloon} • ${item.createdAt}",
+                          style: TextStyle(fontSize: 12),
                         ),
-                        // Trailing: Status Icon
-                        trailing: Tooltip(
-                          message: isSyncedData == 1
-                              ? "Sudah Terupload"
-                              : "Belum Upload",
-                          child: Icon(
-                            isSyncedData == 1
-                                ? Icons.check_circle
-                                : Icons.cloud_upload_rounded,
-                            color: isSyncedData == 1
-                                ? Colors.green
-                                : Colors.orange,
-                          ),
+                        trailing: Icon(
+                          isSyncedData == 1
+                              ? Icons.check_circle
+                              : Icons.cloud_upload,
+                          color: isSyncedData == 1
+                              ? Colors.green
+                              : Colors.orange,
                         ),
                         onTap: () {
-                          // Navigasi ke detail edit
+                          // edit data
                         },
                       ),
                     );
@@ -276,10 +204,83 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: _showSelectMakloonDialog,
         tooltip: "Scan KTP",
         label: Text("Scan KTP"),
         icon: Icon(Icons.document_scanner),
+      ),
+    );
+  }
+
+  // summary item
+  Widget _buildSummaryItem(
+    String count,
+    String label,
+    IconData icon,
+    Color? color,
+  ) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: color),
+            SizedBox(width: 10),
+            Text(
+              count,
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // dialog select makloon
+  void _showSelectMakloonDialog() {
+    Get.defaultDialog(
+      title: "Pilih Makloon",
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 200,
+        child: ListView.builder(
+          itemCount: dummyMakloons.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(dummyMakloons[index].nama),
+              leading: Icon(Icons.factory),
+              onTap: () {
+                Get.back();
+                Get.toNamed(
+                  AppRoutes.scanKtp,
+                  // arguments: dummyMakloons[index],
+                );
+              },
+            );
+          },
+        ),
+      ),
+      actions: [
+        OutlinedButton.icon(
+          onPressed: () => Get.toNamed(AppRoutes.makloonData),
+          icon: Icon(Icons.factory),
+          label: Text("Kelola Makloon"),
+        ),
+      ],
+      cancel: TextButton(
+        onPressed: () => Get.back(),
+        child: Text("Batal", style: TextStyle(color: Colors.red)),
       ),
     );
   }
